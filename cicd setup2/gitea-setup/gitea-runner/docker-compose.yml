@@ -1,0 +1,16 @@
+services:
+  act_runner:
+    image: gitea/act_runner:latest
+    container_name: act_runner
+    environment:
+      - GITEA_INSTANCE_URL=http://192.168.10.168:3000
+      - GITEA_RUNNER_NAME=runner-0
+      - GITEA_RUNNER_REGISTRATION_TOKEN=2INlPUXO5mLiDHe486l3r6hPeagNoCgenHDawx6o
+      - GITEA_RUNNER_LABELS=ubuntu-latest:docker://node:20-bookworm
+    volumes:
+      - act-runner-data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+
+volumes:
+  act-runner-data:

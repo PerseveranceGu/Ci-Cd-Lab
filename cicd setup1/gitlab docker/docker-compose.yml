@@ -1,0 +1,45 @@
+services:
+  gitlab:
+    image: gitlab/gitlab-ce:19.3.1-ce.0
+    logging:
+      driver: json-file
+      options:
+        max-size: "100m"
+        max-file: "3"
+    hostname: gitlab
+    container_name: gitlab
+    restart: always
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'http://192.168.10.173'
+        registry_external_url 'http://192.168.10.173:5050'
+    ports:
+      - "80:80"
+      - "5050:5050"
+      - "2222:22"
+    volumes:
+      - gitlab_config:/etc/gitlab
+      - gitlab_logs:/var/log/gitlab
+      - gitlab_data:/var/opt/gitlab
+    shm_size: "256m"
+
+  gitlab-runner:
+    image: gitlab/gitlab-runner:v19.3.1
+    logging:
+      driver: json-file
+      options:
+        max-size: "100m"
+        max-file: "3"
+    restart: always
+    container_name: gitlab-runner-1
+    depends_on:
+      - gitlab
+    volumes:
+      - gitlab_runner_config:/etc/gitlab-runner
+      - /var/run/docker.sock:/var/run/docker.sock
+
+volumes:
+  gitlab_config:
+  gitlab_logs:
+  gitlab_data:
+  gitlab_runner_config:
